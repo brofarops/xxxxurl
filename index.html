@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SoloLearn Short Link</title>
-  <meta name="description" content="Shorten SoloLearn compiler playground links into clean GitHub Pages URLs." />
+  <meta name="description" content="Create GitHub Pages links for SoloLearn compiler playground projects." />
   <style>
     :root {
       --bg-1: #0f172a;
@@ -15,7 +15,6 @@
       --text: #e2e8f0;
       --primary: #38bdf8;
       --primary-strong: #0284c7;
-      --success: #22c55e;
       --danger: #f87171;
       --shadow: rgba(15, 23, 42, 0.6);
     }
@@ -49,13 +48,7 @@
       padding: 28px;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
     .logo {
       width: 42px;
       height: 42px;
@@ -68,23 +61,9 @@
       box-shadow: 0 10px 18px rgba(56, 189, 248, 0.35);
     }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(1.5rem, 2vw, 2rem);
-      letter-spacing: -0.04em;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin: 10px 0 22px;
-      line-height: 1.6;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    h1 { margin: 0; font-size: clamp(1.5rem, 2vw, 2rem); letter-spacing: -0.04em; }
+    .subtitle { color: var(--muted); margin: 10px 0 22px; line-height: 1.6; }
+    .field { display: flex; flex-direction: column; gap: 10px; }
 
     input {
       width: 100%;
@@ -95,19 +74,10 @@
       font-size: 1rem;
       padding: 15px 16px;
       outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    input:focus {
-      border-color: rgba(56, 189, 248, 0.8);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
-    }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 14px;
-    }
+    input:focus { border-color: rgba(56, 189, 248, 0.8); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12); }
+    .actions { display: flex; gap: 12px; margin-top: 14px; }
 
     button {
       border: none;
@@ -119,155 +89,79 @@
       transition: transform 0.15s ease, filter 0.2s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.04);
-    }
+    button:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .primary-btn { flex: 1; background: linear-gradient(135deg, var(--primary), var(--primary-strong)); color: #082f49; }
+    .ghost-btn { background: rgba(148, 163, 184, 0.08); color: var(--text); border: 1px solid rgba(148, 163, 184, 0.18); }
+    .error { margin-top: 14px; color: var(--danger); font-size: 0.92rem; min-height: 20px; display: none; }
+    .result { margin-top: 22px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 14px; padding: 16px; display: none; }
+    .result-label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .link { word-break: break-all; font-size: 0.96rem; line-height: 1.6; margin-bottom: 12px; }
+    .link a { color: var(--primary); text-decoration: none; }
+    .copy-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .small-btn { padding: 10px 12px; border-radius: 10px; font-size: 0.84rem; background: rgba(56, 189, 248, 0.12); color: var(--text); border: 1px solid rgba(56, 189, 248, 0.2); }
+    .examples { margin-top: 20px; color: var(--muted); font-size: 0.85rem; line-height: 1.7; }
+    code { background: rgba(148, 163, 184, 0.08); border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 8px; padding: 2px 8px; color: var(--text); font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; overflow-wrap: anywhere; }
 
-    .primary-btn {
-      flex: 1;
-      background: linear-gradient(135deg, var(--primary), var(--primary-strong));
-      color: #082f49;
-    }
-
-    .ghost-btn {
-      background: rgba(148, 163, 184, 0.08);
-      color: var(--text);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-    }
-
-    .error {
-      margin-top: 14px;
-      color: var(--danger);
-      font-size: 0.92rem;
-      min-height: 20px;
-      display: none;
-    }
-
-    .result {
-      margin-top: 22px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 14px;
-      padding: 16px;
-      display: none;
-    }
-
-    .result-label {
-      color: var(--muted);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 10px;
-    }
-
-    .link {
-      word-break: break-all;
-      font-size: 0.96rem;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-
-    .link a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .copy-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .small-btn {
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.84rem;
-      background: rgba(56, 189, 248, 0.12);
-      color: var(--text);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-    }
-
-    .examples {
-      margin-top: 20px;
-      color: var(--muted);
-      font-size: 0.85rem;
-      line-height: 1.7;
-    }
-
-    code {
-      background: rgba(148, 163, 184, 0.08);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 8px;
-      padding: 2px 8px;
-      color: var(--text);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    @media (max-width: 420px) {
+      .shell { padding: 22px; }
+      .actions { flex-direction: column; }
     }
   </style>
 </head>
 <body>
-  <div class="shell">
+  <main class="shell">
     <div class="brand">
-      <div class="logo">S</div>
+      <div class="logo" aria-hidden="true">S</div>
       <h1>SoloLearn Short Links</h1>
     </div>
 
-    <p class="subtitle">
-      Turn any SoloLearn compiler-playground URL into a compact short link that opens directly to the project.
-    </p>
+    <p class="subtitle">Turn a SoloLearn compiler-playground URL into a GitHub Pages link that redirects to the project.</p>
 
-    <div class="field">
+    <form id="shortenForm" class="field">
       <input
         id="urlInput"
         type="url"
         aria-label="SoloLearn URL"
         placeholder="https://sololearn.com/compiler-playground/WVo1JAV8BIwn/?ref=app"
+        autocomplete="url"
+        required
       />
-
       <div class="actions">
-        <button class="primary-btn" type="button" onclick="shortenUrl()">Shorten</button>
-        <button class="ghost-btn" type="button" onclick="fillSample()">Use sample</button>
+        <button class="primary-btn" type="submit">Shorten</button>
+        <button class="ghost-btn" id="sampleButton" type="button">Use sample</button>
       </div>
-    </div>
+    </form>
 
-    <div id="errorMsg" class="error">Please enter a valid SoloLearn compiler-playground URL.</div>
+    <div id="errorMsg" class="error" role="alert"></div>
 
-    <div id="outputBox" class="result">
+    <section id="outputBox" class="result" aria-live="polite">
       <div class="result-label">Your short link</div>
       <div class="link"><a id="shortLink" href="#" target="_blank" rel="noopener"></a></div>
       <div class="copy-row">
-        <button class="small-btn" type="button" onclick="copyShortLink()">Copy</button>
-        <button class="small-btn" type="button" onclick="openShortLink()">Open</button>
+        <button class="small-btn" id="copyButton" type="button">Copy</button>
+        <button class="small-btn" id="openButton" type="button">Open</button>
       </div>
-    </div>
+    </section>
 
     <div class="examples">
-      Examples:<br />
-      <code>https://brofar-17.github.io/?WVo1JAV8BIwn</code><br />
-      <code>https://brofar-17.github.io/WVo1JAV8BIwn/</code>
+      Shortener page:<br />
+      <code>https://brofarops.github.io/xxxxurl/</code><br />
+      Example short link:<br />
+      <code>https://brofarops.github.io/xxxxurl/?id=WVo1JAV8BIwn</code>
     </div>
-  </div>
+  </main>
 
   <script>
-    function setError(message) {
-      const error = document.getElementById('errorMsg');
-      const output = document.getElementById('outputBox');
-      error.textContent = message;
-      error.style.display = 'block';
-      output.style.display = 'none';
-    }
+    // This is the actual repository name: brofarops/xxxxurl (four x characters).
+    // Keep this absolute URL: SoloLearn's embedded preview may report a null/blank origin.
+    const SHORTENER_BASE = 'https://brofarops.github.io/xxxxurl/';
+    const SOLOLEARN_HOST = 'sololearn.com';
 
-    function clearError() {
-      const error = document.getElementById('errorMsg');
-      error.style.display = 'none';
-    }
-
-    function fillSample() {
-      const input = document.getElementById('urlInput');
-      input.value = 'https://sololearn.com/compiler-playground/WVo1JAV8BIwn/?ref=app';
-      input.focus();
-      input.select();
-    }
+    const form = document.getElementById('shortenForm');
+    const input = document.getElementById('urlInput');
+    const error = document.getElementById('errorMsg');
+    const output = document.getElementById('outputBox');
+    const shortLinkElement = document.getElementById('shortLink');
 
     function getProjectIdFromUrl(rawUrl) {
       let parsed;
@@ -278,275 +172,80 @@
       }
 
       const host = parsed.hostname.toLowerCase();
-      if (!host.endsWith('sololearn.com')) return null;
+      if (host !== SOLOLEARN_HOST && !host.endsWith('.' + SOLOLEARN_HOST)) {
+        return null;
+      }
 
-      const match = parsed.pathname.match(/\/compiler-playground\/([a-zA-Z0-9_-]+)/i);
+      const match = parsed.pathname.match(/^\/compiler-playground\/([a-zA-Z0-9_-]+)(?:\/|$)/i);
       return match ? match[1] : null;
     }
 
-    function generateShortUrl(projectId) {
-      const base = window.location.origin + window.location.pathname.replace(/\/+$/, '');
-      return `${base}/${encodeURIComponent(projectId)}/`;
+    function makeShortUrl(projectId) {
+      const url = new URL(SHORTENER_BASE);
+      url.searchParams.set('id', projectId);
+      return url.href;
     }
 
-    function shortenUrl() {
-      const input = document.getElementById('urlInput');
+    function showError(message) {
+      error.textContent = message;
+      error.style.display = 'block';
+      output.style.display = 'none';
+    }
+
+    function hideError() {
+      error.textContent = '';
+      error.style.display = 'none';
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
       const projectId = getProjectIdFromUrl(input.value.trim());
 
       if (!projectId) {
-        setError('Please enter a valid SoloLearn compiler-playground URL.');
+        showError('Enter a valid SoloLearn compiler-playground URL, including its project ID.');
         return;
       }
 
-      clearError();
-      const shortLink = generateShortUrl(projectId);
-      const output = document.getElementById('outputBox');
-      const link = document.getElementById('shortLink');
-
-      link.href = shortLink;
-      link.textContent = shortLink;
+      hideError();
+      const shortUrl = makeShortUrl(projectId);
+      shortLinkElement.href = shortUrl;
+      shortLinkElement.textContent = shortUrl;
       output.style.display = 'block';
-      navigator.clipboard?.writeText(shortLink);
-    }
 
-    function copyShortLink() {
-      const link = document.getElementById('shortLink');
-      if (!link.href || link.href === '#') return;
-      navigator.clipboard?.writeText(link.href);
-    }
+      try {
+        await navigator.clipboard.writeText(shortUrl);
+      } catch {
+        // Clipboard access may be unavailable in embedded previews; the link remains selectable.
+      }
+    });
 
-    function openShortLink() {
-      const link = document.getElementById('shortLink');
-      if (!link.href || link.href === '#') return;
-      window.open(link.href, '_blank', 'noopener');
-    }
+    document.getElementById('sampleButton').addEventListener('click', () => {
+      input.value = 'https://sololearn.com/compiler-playground/WVo1JAV8BIwn/?ref=app';
+      input.focus();
+    });
 
-    const query = window.location.search.substring(1).trim();
-    const pathSegments = window.location.pathname.split('/').filter(Boolean);
-    const lastSegment = pathSegments[pathSegments.length - 1] || '';
-    const pathId = lastSegment.toLowerCase() === 'xxxxurl' ? '' : lastSegment;
-    const projectId = (/^[a-zA-Z0-9_-]+$/.test(query) ? query : '') || (/^[a-zA-Z0-9_-]{4,}$/.test(pathId) ? pathId : '');
+    document.getElementById('copyButton').addEventListener('click', async () => {
+      if (!shortLinkElement.href || shortLinkElement.getAttribute('href') === '#') return;
+      try {
+        await navigator.clipboard.writeText(shortLinkElement.href);
+      } catch {
+        showError('Copy was blocked by the browser. Select and copy the short link above.');
+      }
+    });
 
-    if (projectId) {
-      window.location.replace(`https://sololearn.com/compiler-playground/${encodeURIComponent(projectId)}/?ref=app`);
+    document.getElementById('openButton').addEventListener('click', () => {
+      if (!shortLinkElement.href || shortLinkElement.getAttribute('href') === '#') return;
+      window.open(shortLinkElement.href, '_blank', 'noopener,noreferrer');
+    });
+
+    // Only redirect on the deployed shortener page when a valid ?id=... is supplied.
+    // No pathname parsing is used, so "xxxxurl" can never be mistaken for a project ID.
+    const requestedId = new URLSearchParams(window.location.search).get('id');
+    if (requestedId && /^[a-zA-Z0-9_-]{1,100}$/.test(requestedId)) {
+      window.location.replace(
+        'https://sololearn.com/compiler-playground/' + encodeURIComponent(requestedId) + '/?ref=app'
+      );
     }
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
