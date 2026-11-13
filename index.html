@@ -5,15 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SoloLearn Link Shortener</title>
   <script>
-    // Redirect short links immediately, before the page renders.
+    // Support both legacy query links (?PROJECT_ID) and clean path links (/PROJECT_ID/).
     const query = window.location.search.substring(1).trim();
-    const projectIds = {
-      // Repair the accidentally mistyped ID and keep old short links working.
-      WhonPobm5rSW: 'WVo1JAV8BIwn'
-    };
-    if (query && /^[a-zA-Z0-9_-]+$/.test(query)) {
-      const projectId = projectIds[query] || query;
-      window.location.replace(`https://sololearn.com/compiler-playground/${projectId}/?ref=app`);
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    const lastPathSegment = pathSegments[pathSegments.length - 1] || '';
+    // Do not mistake this repository's GitHub Pages base path for a project ID.
+    const pathId = lastPathSegment.toLowerCase() === 'xxxxurl' ? '' : lastPathSegment;
+    const projectId = /^[a-zA-Z0-9_-]+$/.test(query)
+      ? query
+      : (/^[a-zA-Z0-9_-]{4,}$/.test(pathId) ? pathId : '');
+
+    if (projectId) {
+      window.location.replace(`https://sololearn.com/compiler-playground/${encodeURIComponent(projectId)}/?ref=app`);
     }
   </script>
   <style>
@@ -120,7 +123,6 @@
       errorMsg.style.display = "none";
       outputBox.style.display = "none";
 
-      // Extract the project ID after /compiler-playground/ from a SoloLearn URL.
       let parsedUrl;
       try {
         parsedUrl = new URL(input);
@@ -139,13 +141,12 @@
       }
 
       const projectId = match[1];
-      const generatedUrl = `${window.location.origin}${window.location.pathname}?${projectId}`;
+      const basePath = window.location.pathname.replace(/\/+$/, "");
+      const generatedUrl = `${window.location.origin}${basePath}/${encodeURIComponent(projectId)}/`;
 
       shortLinkEl.href = generatedUrl;
       shortLinkEl.textContent = generatedUrl;
       outputBox.style.display = "block";
-
-      // Automatically copy to clipboard for convenience.
       navigator.clipboard?.writeText(generatedUrl);
     }
   </script>

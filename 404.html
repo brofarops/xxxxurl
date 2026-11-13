@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting to SoloLearn…</title>
+  <script>
+    // GitHub Pages serves this file for unknown paths, enabling /PROJECT_ID/ short links.
+    const query = window.location.search.substring(1).trim();
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    const lastSegment = segments[segments.length - 1] || '';
+    const pathId = lastSegment.toLowerCase() === 'xxxxurl' ? '' : lastSegment;
+    const projectId = /^[a-zA-Z0-9_-]+$/.test(query)
+      ? query
+      : (/^[a-zA-Z0-9_-]{4,}$/.test(pathId) ? pathId : '');
+
+    if (projectId) {
+      window.location.replace(`https://sololearn.com/compiler-playground/${encodeURIComponent(projectId)}/?ref=app`);
+    } else {
+      window.location.replace('./');
+    }
+  </script>
+</head>
+<body>
+  <p>Redirecting to SoloLearn…</p>
+</body>
+</html>
