@@ -5,11 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SoloLearn Link Shortener</title>
   <script>
-    // 1. INSTANT REDIRECT LOGIC
-    // Runs immediately before the page renders if a query ID is present (e.g., ?WhonPobm5rSW)
+    // Redirect short links immediately, before the page renders.
     const query = window.location.search.substring(1).trim();
+    const projectIds = {
+      // Repair the accidentally mistyped ID and keep old short links working.
+      WhonPobm5rSW: 'WVo1JAV8BIwn'
+    };
     if (query && /^[a-zA-Z0-9_-]+$/.test(query)) {
-      window.location.replace(`https://sololearn.com/compiler-playground/${query}/`);
+      const projectId = projectIds[query] || query;
+      window.location.replace(`https://sololearn.com/compiler-playground/${projectId}/?ref=app`);
     }
   </script>
   <style>
@@ -90,19 +94,19 @@
   <div class="card">
     <h1>SoloLearn Link Shortener</h1>
     <p>Paste any SoloLearn compiler playground URL to generate a clean short link.</p>
-    
-    <input 
-      type="url" 
-      id="urlInput" 
-      placeholder="https://sololearn.com/compiler-playground/WhonPobm5rSW/?ref=app" 
+
+    <input
+      type="url"
+      id="urlInput"
+      placeholder="https://sololearn.com/compiler-playground/WVo1JAV8BIwn/?ref=app"
     />
     <button onclick="shortenUrl()">Shorten Link</button>
-    
+
     <div id="errorMsg" class="error">Please enter a valid SoloLearn compiler-playground URL.</div>
-    
+
     <div id="outputBox" class="output">
       <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px;">Your short link (copied to clipboard):</div>
-      <a id="shortLink" href="#" target="_blank"></a>
+      <a id="shortLink" href="#" target="_blank" rel="noopener"></a>
     </div>
   </div>
 
@@ -116,8 +120,18 @@
       errorMsg.style.display = "none";
       outputBox.style.display = "none";
 
-      // Extract the project ID after /compiler-playground/
-      const match = input.match(/sololearn\.com\/compiler-playground\/([a-zA-Z0-9_-]+)/i);
+      // Extract the project ID after /compiler-playground/ from a SoloLearn URL.
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(input);
+      } catch {
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      const match = parsedUrl.hostname.toLowerCase().endsWith("sololearn.com")
+        ? parsedUrl.pathname.match(/\/compiler-playground\/([a-zA-Z0-9_-]+)/i)
+        : null;
 
       if (!match || !match[1]) {
         errorMsg.style.display = "block";
@@ -125,13 +139,13 @@
       }
 
       const projectId = match[1];
-      const generatedUrl = `https://brofar-17.github.io/?${projectId}`;
+      const generatedUrl = `${window.location.origin}${window.location.pathname}?${projectId}`;
 
       shortLinkEl.href = generatedUrl;
       shortLinkEl.textContent = generatedUrl;
       outputBox.style.display = "block";
 
-      // Automatically copy to clipboard for convenience
+      // Automatically copy to clipboard for convenience.
       navigator.clipboard?.writeText(generatedUrl);
     }
   </script>
