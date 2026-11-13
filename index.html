@@ -3,152 +3,550 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SoloLearn Link Shortener</title>
+  <title>SoloLearn Short Link</title>
+  <meta name="description" content="Shorten SoloLearn compiler playground links into clean GitHub Pages URLs." />
+  <style>
+    :root {
+      --bg-1: #0f172a;
+      --bg-2: #111827;
+      --panel: rgba(15, 23, 42, 0.8);
+      --panel-border: rgba(148, 163, 184, 0.25);
+      --muted: #94a3b8;
+      --text: #e2e8f0;
+      --primary: #38bdf8;
+      --primary-strong: #0284c7;
+      --success: #22c55e;
+      --danger: #f87171;
+      --shadow: rgba(15, 23, 42, 0.6);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.25), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(100%, 540px);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 22px;
+      box-shadow: 0 22px 50px var(--shadow);
+      backdrop-filter: blur(14px);
+      padding: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #082f49;
+      box-shadow: 0 10px 18px rgba(56, 189, 248, 0.35);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 2vw, 2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 10px 0 22px;
+      line-height: 1.6;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      padding: 15px 16px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus {
+      border-color: rgba(56, 189, 248, 0.8);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 0.96rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    .primary-btn {
+      flex: 1;
+      background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+      color: #082f49;
+    }
+
+    .ghost-btn {
+      background: rgba(148, 163, 184, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .error {
+      margin-top: 14px;
+      color: var(--danger);
+      font-size: 0.92rem;
+      min-height: 20px;
+      display: none;
+    }
+
+    .result {
+      margin-top: 22px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 14px;
+      padding: 16px;
+      display: none;
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .link {
+      word-break: break-all;
+      font-size: 0.96rem;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .link a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .copy-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .small-btn {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--text);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .examples {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    code {
+      background: rgba(148, 163, 184, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 8px;
+      padding: 2px 8px;
+      color: var(--text);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="brand">
+      <div class="logo">S</div>
+      <h1>SoloLearn Short Links</h1>
+    </div>
+
+    <p class="subtitle">
+      Turn any SoloLearn compiler-playground URL into a compact short link that opens directly to the project.
+    </p>
+
+    <div class="field">
+      <input
+        id="urlInput"
+        type="url"
+        aria-label="SoloLearn URL"
+        placeholder="https://sololearn.com/compiler-playground/WVo1JAV8BIwn/?ref=app"
+      />
+
+      <div class="actions">
+        <button class="primary-btn" type="button" onclick="shortenUrl()">Shorten</button>
+        <button class="ghost-btn" type="button" onclick="fillSample()">Use sample</button>
+      </div>
+    </div>
+
+    <div id="errorMsg" class="error">Please enter a valid SoloLearn compiler-playground URL.</div>
+
+    <div id="outputBox" class="result">
+      <div class="result-label">Your short link</div>
+      <div class="link"><a id="shortLink" href="#" target="_blank" rel="noopener"></a></div>
+      <div class="copy-row">
+        <button class="small-btn" type="button" onclick="copyShortLink()">Copy</button>
+        <button class="small-btn" type="button" onclick="openShortLink()">Open</button>
+      </div>
+    </div>
+
+    <div class="examples">
+      Examples:<br />
+      <code>https://brofar-17.github.io/?WVo1JAV8BIwn</code><br />
+      <code>https://brofar-17.github.io/WVo1JAV8BIwn/</code>
+    </div>
+  </div>
+
   <script>
-    // Support both legacy query links (?PROJECT_ID) and clean path links (/PROJECT_ID/).
+    function setError(message) {
+      const error = document.getElementById('errorMsg');
+      const output = document.getElementById('outputBox');
+      error.textContent = message;
+      error.style.display = 'block';
+      output.style.display = 'none';
+    }
+
+    function clearError() {
+      const error = document.getElementById('errorMsg');
+      error.style.display = 'none';
+    }
+
+    function fillSample() {
+      const input = document.getElementById('urlInput');
+      input.value = 'https://sololearn.com/compiler-playground/WVo1JAV8BIwn/?ref=app';
+      input.focus();
+      input.select();
+    }
+
+    function getProjectIdFromUrl(rawUrl) {
+      let parsed;
+      try {
+        parsed = new URL(rawUrl);
+      } catch {
+        return null;
+      }
+
+      const host = parsed.hostname.toLowerCase();
+      if (!host.endsWith('sololearn.com')) return null;
+
+      const match = parsed.pathname.match(/\/compiler-playground\/([a-zA-Z0-9_-]+)/i);
+      return match ? match[1] : null;
+    }
+
+    function generateShortUrl(projectId) {
+      const base = window.location.origin + window.location.pathname.replace(/\/+$/, '');
+      return `${base}/${encodeURIComponent(projectId)}/`;
+    }
+
+    function shortenUrl() {
+      const input = document.getElementById('urlInput');
+      const projectId = getProjectIdFromUrl(input.value.trim());
+
+      if (!projectId) {
+        setError('Please enter a valid SoloLearn compiler-playground URL.');
+        return;
+      }
+
+      clearError();
+      const shortLink = generateShortUrl(projectId);
+      const output = document.getElementById('outputBox');
+      const link = document.getElementById('shortLink');
+
+      link.href = shortLink;
+      link.textContent = shortLink;
+      output.style.display = 'block';
+      navigator.clipboard?.writeText(shortLink);
+    }
+
+    function copyShortLink() {
+      const link = document.getElementById('shortLink');
+      if (!link.href || link.href === '#') return;
+      navigator.clipboard?.writeText(link.href);
+    }
+
+    function openShortLink() {
+      const link = document.getElementById('shortLink');
+      if (!link.href || link.href === '#') return;
+      window.open(link.href, '_blank', 'noopener');
+    }
+
     const query = window.location.search.substring(1).trim();
     const pathSegments = window.location.pathname.split('/').filter(Boolean);
-    const lastPathSegment = pathSegments[pathSegments.length - 1] || '';
-    // Do not mistake this repository's GitHub Pages base path for a project ID.
-    const pathId = lastPathSegment.toLowerCase() === 'xxxxurl' ? '' : lastPathSegment;
-    const projectId = /^[a-zA-Z0-9_-]+$/.test(query)
-      ? query
-      : (/^[a-zA-Z0-9_-]{4,}$/.test(pathId) ? pathId : '');
+    const lastSegment = pathSegments[pathSegments.length - 1] || '';
+    const pathId = lastSegment.toLowerCase() === 'xxxxurl' ? '' : lastSegment;
+    const projectId = (/^[a-zA-Z0-9_-]+$/.test(query) ? query : '') || (/^[a-zA-Z0-9_-]{4,}$/.test(pathId) ? pathId : '');
 
     if (projectId) {
       window.location.replace(`https://sololearn.com/compiler-playground/${encodeURIComponent(projectId)}/?ref=app`);
     }
   </script>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 1rem;
-    }
-    .card {
-      background: #1e293b;
-      padding: 2rem;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 460px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    }
-    h1 {
-      margin-top: 0;
-      font-size: 1.4rem;
-    }
-    p {
-      color: #94a3b8;
-      font-size: 0.9rem;
-    }
-    input {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.75rem 0;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      background: #0f172a;
-      color: #fff;
-      font-size: 0.95rem;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 0.75rem;
-      background: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #2563eb;
-    }
-    .output {
-      margin-top: 1.25rem;
-      padding: 0.75rem;
-      background: #0f172a;
-      border-radius: 8px;
-      display: none;
-      word-break: break-all;
-    }
-    .output a {
-      color: #38bdf8;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .error {
-      color: #f87171;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>SoloLearn Link Shortener</h1>
-    <p>Paste any SoloLearn compiler playground URL to generate a clean short link.</p>
-
-    <input
-      type="url"
-      id="urlInput"
-      placeholder="https://sololearn.com/compiler-playground/WVo1JAV8BIwn/?ref=app"
-    />
-    <button onclick="shortenUrl()">Shorten Link</button>
-
-    <div id="errorMsg" class="error">Please enter a valid SoloLearn compiler-playground URL.</div>
-
-    <div id="outputBox" class="output">
-      <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px;">Your short link (copied to clipboard):</div>
-      <a id="shortLink" href="#" target="_blank" rel="noopener"></a>
-    </div>
-  </div>
-
-  <script>
-    function shortenUrl() {
-      const input = document.getElementById("urlInput").value.trim();
-      const errorMsg = document.getElementById("errorMsg");
-      const outputBox = document.getElementById("outputBox");
-      const shortLinkEl = document.getElementById("shortLink");
-
-      errorMsg.style.display = "none";
-      outputBox.style.display = "none";
-
-      let parsedUrl;
-      try {
-        parsedUrl = new URL(input);
-      } catch {
-        errorMsg.style.display = "block";
-        return;
-      }
-
-      const match = parsedUrl.hostname.toLowerCase().endsWith("sololearn.com")
-        ? parsedUrl.pathname.match(/\/compiler-playground\/([a-zA-Z0-9_-]+)/i)
-        : null;
-
-      if (!match || !match[1]) {
-        errorMsg.style.display = "block";
-        return;
-      }
-
-      const projectId = match[1];
-      const basePath = window.location.pathname.replace(/\/+$/, "");
-      const generatedUrl = `${window.location.origin}${basePath}/${encodeURIComponent(projectId)}/`;
-
-      shortLinkEl.href = generatedUrl;
-      shortLinkEl.textContent = generatedUrl;
-      outputBox.style.display = "block";
-      navigator.clipboard?.writeText(generatedUrl);
-    }
-  </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
